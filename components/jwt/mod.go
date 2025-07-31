@@ -1,19 +1,16 @@
 package jwt
 
 import (
+	"cmc-server/util"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/beego/beego/v2/server/web/context"
-	gm "github.com/tjfoc/gmsm/sm4"
 )
 
 var (
-	Key              = []byte("1234567890abcdef")
-	vi               = make([]byte, 8)
 	JwtDataUserId    = "jwt.filter.userid"
 	JwtDataPayload   = "jwt.filter.JwtPayload"
 	NoAuthPathPrefix = "/noAuth"
@@ -25,20 +22,6 @@ func init() {
 type JwtPayload struct {
 	Id         string `json:"id"`
 	Expiration int64  `json:"expiration"`
-}
-
-func Generate_token(id string) (string, error) {
-	now := time.Now()
-	future := now.AddDate(0, 0, 30)
-	timestamp := future.UnixNano()
-	payload := JwtPayload{Id: id, Expiration: timestamp}
-
-	byt, err := JwtEncrypt(payload)
-	if err != nil {
-		return "", err
-	}
-
-	return string(*byt), nil
 }
 
 func JwtFilter(ctx *context.Context) {
@@ -64,7 +47,7 @@ func JwtFilter(ctx *context.Context) {
 
 	tokenString := parts[1]
 
-	jwtPayload, err := JwtDecrypt([]byte(tokenString))
+	jwtPayload, err := JwtDecrypt(tokenString)
 
 	if err != nil {
 		ctx.Output.SetStatus(400)
@@ -85,53 +68,40 @@ func JwtFilter(ctx *context.Context) {
 
 }
 
-func JwtEncrypt(payload JwtPayload) (*[]byte, error) {
-	var (
-		err error
-	)
-	str, err := json.Marshal(payload)
+func JwtEncrypt(id string) (string, error) {
+	now := time.Now()
+	future := now.AddDate(0, 0, 30)
+	timestamp := future.UnixNano()
+	payload := JwtPayload{Id: id, Expiration: timestamp}
 
-	str = append(str, []byte("123")...)
-
-	fmt.Println("aaaaaaa", len(str))
+	jwt_json_str, err := json.Marshal(payload)
 	if err != nil {
-		return nil, err
+		return "", err
+	}
+	byt, err := util.Encrypt(jwt_json_str)
+	if err != nil {
+		return "", err
 	}
 
-	byt, _, err := gm.Sm4GCM(Key, vi, str, []byte{0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10}, true)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &byt, nil
+	return string(*byt), nil
 }
 
-func JwtDecrypt(byt []byte) (*JwtPayload, error) {
-	var (
-		err error
-	)
-	json_str, _, err := gm.Sm4GCM(Key, vi, byt, []byte{0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10}, false)
+func JwtDecrypt(token string) (*JwtPayload, error) {
+	jwt_payload_str, err := util.Decrypt([]byte(token))
 	if err != nil {
 		return nil, err
 	}
 
 	var payload JwtPayload
 
-	if err := json.Unmarshal([]byte(json_str), &payload); err != nil {
+	// 解析 JSON
+	err = json.Unmarshal(*jwt_payload_str, &payload)
+	if err != nil {
 		return nil, err
 	}
 
 	return &payload, nil
-
 }
 
 func init() {
-	fmt.Println("aaa")
-	aaa, _ := Generate_token("321")
-
-	fmt.Println("data", aaa)
-
-	json_str, _ := JwtDecrypt([]byte(aaa))
-	fmt.Println("data2", json_str)
 }

@@ -2,7 +2,6 @@ package common
 
 import (
 	"encoding/json"
-	"net/http"
 
 	"github.com/beego/beego/v2/core/validation"
 	"github.com/beego/beego/v2/server/web"
@@ -29,7 +28,12 @@ func (c *BaseController) Send(res any) {
 func (c *BaseController) VaildateError(msg string) {
 
 	c.Ctx.Output.SetStatus(400)
-	c.Ctx.Output.Body([]byte(msg))
+	c.Data["json"] = map[string]any{
+		"code":    400,
+		"message": "error",
+		"data":    msg,
+	}
+	c.ServeJSON()
 }
 
 func (c *BaseController) Vaildate(res any) bool {
@@ -44,7 +48,7 @@ func (c *BaseController) Vaildate(res any) bool {
 		// 校验不通过，收集错误信息
 		var errMsg string
 		for _, err := range valid.Errors {
-			errMsg += err.Key + ": " + err.Message + "\n"
+			errMsg += err.Key + "\n"
 		}
 		c.VaildateError(errMsg)
 		return false
@@ -55,9 +59,8 @@ func (c *BaseController) Vaildate(res any) bool {
 
 func (c *BaseController) Error(err error) {
 
-	c.Ctx.Output.SetStatus(http.StatusInternalServerError)
 	c.Data["json"] = map[string]any{
-		"code":    500,
+		"code":    -1,
 		"message": "error",
 		"data":    err.Error(),
 	}

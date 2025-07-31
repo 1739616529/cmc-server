@@ -4,14 +4,16 @@ import (
 	"cmc-server/components/redis"
 	"cmc-server/dto"
 	"cmc-server/models"
+	"cmc-server/util"
+	"context"
 	"errors"
 )
 
-type UserService struct {
+type AuthService struct {
 	redisService redis.RedisService
 }
 
-func (u *UserService) UserLogin(dto *dto.UserLogin) (*models.User, error) {
+func (u *AuthService) Login(dto *dto.UserLogin) (*models.User, error) {
 
 	var user models.User
 
@@ -35,7 +37,7 @@ func (u *UserService) UserLogin(dto *dto.UserLogin) (*models.User, error) {
 	return nil, nil // 没有匹配的用户
 }
 
-func (u *UserService) UserRegister(dto *dto.UserRegister) (*models.User, error) {
+func (u *AuthService) Register(dto *dto.UserRegister) (*models.User, error) {
 
 	var user models.User
 	has, err := models.Engine.Where("email = ? OR phone = ?", dto.Email, dto.Phone).Get(&user)
@@ -47,4 +49,17 @@ func (u *UserService) UserRegister(dto *dto.UserRegister) (*models.User, error) 
 	}
 
 	return &models.User{Id: "321"}, nil // 没有匹配的用户
+}
+
+func (u *AuthService) GetCaptcha(ctx context.Context, dto *dto.CaptchaGet) (string, error) {
+
+	id := util.RandString(6)
+
+	_, err := u.redisService.SetCaptcha(ctx, dto.Account, id, util.RandString(6))
+
+	if err != nil {
+		return "", err
+	}
+
+	return id, nil
 }

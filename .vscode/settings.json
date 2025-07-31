@@ -72,4 +72,7 @@
     "[toml]": {
         "editor.defaultFormatter": "tamasfe.even-better-toml"
     },
+    "[go]": {
+        "editor.defaultFormatter": "golang.go"
+    },
 }

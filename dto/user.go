@@ -3,26 +3,28 @@ package dto
 type UserCreate struct {
 	Name   string `json:"username" valid:"MaxSize(20)"`
 	Phone  string `json:"phone"`
-	Passwd string `json:"password"`
+	Passwd string `json:"passwd"`
 	Email  string `json:"email" valid:"Email"`
 }
 
 type UserOutput struct {
-	Name  string `json:"username" valid:"MaxSize(20)"`
-	Phone string `json:"phone" `
-	Email string `json:"email" valid:"Email"`
+	Id     string `json:"id"`
+	Name   string `json:"username" `
+	Phone  string `json:"phone" `
+	Email  string `json:"email" `
+	Avatar string `json:"avatar" `
 }
 
 type UserLogin struct {
 	Phone  string `json:"phone"`
 	Email  string `json:"email"`
-	Passwd string `json:"password" valid:"Required"`
+	Passwd string `json:"passwd" valid:"Required"`
 }
 
 type UserRegister struct {
 	Phone    string `json:"phone"`
 	Email    string `json:"email"`
-	Passwd   string `json:"password" valid:"Required"`
+	Passwd   string `json:"passwd" valid:"Required"`
 	Type     string `json:"type" valid:"Required"`
 	Name     string `json:"name" valid:"Required"`
 	Code     string `json:"code" valid:"Required"`

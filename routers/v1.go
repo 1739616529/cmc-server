@@ -8,12 +8,19 @@ import (
 )
 
 func V1Router() *beego.Namespace {
+
+	routes := []beego.LinkNamespace{}
+
+	routes = append(routes, ControllerMethods("/user", &controllers.UserController{}, "/get:post:GetUser")...)
+
+	routes = append(routes, ControllerMethods("/auth",
+		&controllers.AuthController{},
+		jwt.NoAuthPathPrefix+"/login:post:Login",
+		jwt.NoAuthPathPrefix+"/register:post:Register",
+		jwt.NoAuthPathPrefix+"/captcha:post:GetCaptcha",
+	)...)
+
 	return beego.NewNamespace("/api/v1",
-		ControllerMethods("/user",
-			&controllers.UserController{},
-			"/get:post:GetUser",
-			jwt.NoAuthPathPrefix+"/login:post:Login",
-			jwt.NoAuthPathPrefix+"/register:post:Register",
-		)...,
+		routes...,
 	)
 }

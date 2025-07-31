@@ -12,7 +12,10 @@ require (
 	xorm.io/xorm v1.3.10
 )
 
-require github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+require (
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/jinzhu/copier v0.4.0 // indirect
+)
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
