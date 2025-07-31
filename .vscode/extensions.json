@@ -1,0 +1,12 @@
+{
+    "recommendations": [
+        "Vue.volar",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "eamodio.gitlens",
+        "MS-CEINTL.vscode-language-pack-zh-hans",
+        "EditorConfig.EditorConfig",
+        "bradlc.vscode-tailwindcss",
+        "TypeScriptTeam.native-preview",
+    ],
+}
