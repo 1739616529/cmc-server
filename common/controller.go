@@ -1,7 +1,9 @@
 package common
 
 import (
+	"cmc-server/resp"
 	"encoding/json"
+	"errors"
 
 	"github.com/beego/beego/v2/core/validation"
 	"github.com/beego/beego/v2/server/web"
@@ -18,30 +20,22 @@ func (c *BaseController) ParseJson(dto any) error {
 func (c *BaseController) Send(res any) {
 
 	c.Data["json"] = map[string]any{
-		"code":    200,
-		"message": "请求成功",
+		"code":    0,
+		"message": "success",
 		"data":    res,
 	}
 	c.ServeJSON()
 }
 
 func (c *BaseController) VaildateError(msg string) {
-
-	c.Ctx.Output.SetStatus(400)
-	c.Data["json"] = map[string]any{
-		"code":    400,
-		"message": "error",
-		"data":    msg,
-	}
-	c.ServeJSON()
+	c.Error(errors.New(msg), 400)
 }
 
 func (c *BaseController) Vaildate(res any) bool {
 	valid := validation.Validation{}
 	passed, err := valid.Valid(res)
 	if err != nil {
-		c.Ctx.Output.SetStatus(500)
-		c.Ctx.Output.Body([]byte("校验异常"))
+		c.VaildateError(err.Error())
 		return false
 	}
 	if !passed {
@@ -57,12 +51,26 @@ func (c *BaseController) Vaildate(res any) bool {
 	return true
 }
 
-func (c *BaseController) Error(err error) {
+func (c *BaseController) Error(err error, code int) {
 
-	c.Data["json"] = map[string]any{
-		"code":    -1,
-		"message": "error",
-		"data":    err.Error(),
+	if e, ok := err.(resp.Error); ok {
+		c.Data["json"] = map[string]any{
+			"code":    e.Code,
+			"message": e.Msg,
+			"data":    nil,
+		}
+	} else {
+		c.Data["json"] = map[string]any{
+			"code":    code,
+			"message": err,
+			"data":    nil,
+		}
 	}
+
 	c.ServeJSON()
+}
+
+func (c *BaseController) ServerError(err error) {
+
+	c.Error(err, 500)
 }

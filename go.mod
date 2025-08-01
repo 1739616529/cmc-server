@@ -15,6 +15,7 @@ require (
 require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/jinzhu/copier v0.4.0 // indirect
+	github.com/resend/resend-go/v2 v2.21.0 // indirect
 )
 
 require (

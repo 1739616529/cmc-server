@@ -2,49 +2,8 @@ package service
 
 import (
 	"cmc-server/components/redis"
-	"cmc-server/dto"
-	"cmc-server/models"
-	"errors"
 )
 
 type UserService struct {
 	redisService redis.RedisService
-}
-
-func (u *UserService) UserLogin(dto *dto.UserLogin) (*models.User, error) {
-
-	var user models.User
-
-	has, err := models.Engine.Where("email = ? AND passwd = ?", dto.Email, dto.Passwd).Get(&user)
-	if err != nil {
-		return nil, err
-	}
-	if has {
-		return &user, nil
-	}
-
-	// 邮箱没找到，再用手机号匹配
-	has, err = models.Engine.Where("phone = ? AND passwd = ?", dto.Phone, dto.Passwd).Get(&user)
-	if err != nil {
-		return nil, err
-	}
-	if has {
-		return &user, nil
-	}
-
-	return nil, nil // 没有匹配的用户
-}
-
-func (u *UserService) UserRegister(dto *dto.UserRegister) (*models.User, error) {
-
-	var user models.User
-	has, err := models.Engine.Where("email = ? OR phone = ?", dto.Email, dto.Phone).Get(&user)
-	if err != nil {
-		return nil, err
-	}
-	if has {
-		return nil, errors.New("user is exist")
-	}
-
-	return &models.User{Id: "321"}, nil // 没有匹配的用户
 }

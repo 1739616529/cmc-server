@@ -2,6 +2,7 @@ package jwt
 
 import (
 	"cmc-server/util"
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"strings"
@@ -83,11 +84,16 @@ func JwtEncrypt(id string) (string, error) {
 		return "", err
 	}
 
-	return string(*byt), nil
+	return base64.StdEncoding.EncodeToString(*byt), nil
 }
 
 func JwtDecrypt(token string) (*JwtPayload, error) {
-	jwt_payload_str, err := util.Decrypt([]byte(token))
+	encrypted, err := base64.StdEncoding.DecodeString(token)
+	if err != nil {
+		return nil, err
+	}
+
+	jwt_payload_str, err := util.Decrypt(encrypted)
 	if err != nil {
 		return nil, err
 	}

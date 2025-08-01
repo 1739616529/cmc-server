@@ -40,13 +40,14 @@ func (r *RedisService) SetCaptcha(ctx context.Context, user string, id string, c
 		return false, errors.New("It's been less than a minute since the last request was sent")
 	}
 
-	Engine.Set(ctx, userKey, code, 1*time.Minute)
+	Engine.Set(ctx, userKey, code, 1*time.Second)
 	Engine.Set(ctx, key, code, 15*time.Minute)
 
 	return true, nil
 }
-func (r *RedisService) ValidateCaptcha(id string, code string) (bool, error) {
-	_code, err := Engine.Get(r.Ctx.Request.Context(), "captcha."+id).Result()
+func (r *RedisService) ValidateCaptcha(ctx context.Context, id string, code string) (bool, error) {
+	_code, err := Engine.Get(ctx, "captcha."+id).Result()
+
 	if err != nil {
 		return false, nil
 	}

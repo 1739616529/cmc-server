@@ -39,6 +39,7 @@ var _ common.Output = (*User)(nil)
 
 // 在插入前设置 UUID
 func (u *User) BeforeInsert() {
+	println("BeforeInsert")
 	if u.Id == "" {
 		u.Id = uuid.New().String()
 	}

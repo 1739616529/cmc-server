@@ -62,13 +62,23 @@ func Decrypt(byt []byte) (*[]byte, error) {
 	return &plaintext, nil
 }
 
-const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+const charsetLetterLowerCase = "abcdefghijklmnopqrstuvwxyz"
+const charsetLetterUpperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const charsetNumber = "0123456789"
 
-func RandString(length int) string {
+func RandString(length int, ditc string) string {
+
 	rand.Seed(time.Now().UnixNano()) // 每次生成不同结果
 	b := make([]byte, length)
 	for i := range b {
-		b[i] = charset[rand.Intn(len(charset))]
+		b[i] = ditc[rand.Intn(len(ditc))]
 	}
 	return string(b)
+}
+
+func RandStringLetter(length int) string {
+	return RandString(length, charsetLetterLowerCase+charsetLetterUpperCase)
+}
+func RandNumber(length int) string {
+	return RandString(length, charsetNumber)
 }

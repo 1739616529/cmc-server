@@ -6,7 +6,6 @@ import (
 	"cmc-server/dto"
 	"cmc-server/service"
 	"errors"
-	"fmt"
 )
 
 type AuthController struct {
@@ -29,20 +28,20 @@ func (c *AuthController) Login() {
 	user, err := c.authService.Login(&req)
 
 	if err != nil {
-		c.Error(err)
+		c.ServerError(err)
 		return
 	}
 
 	// 用户不存在
 	if user == nil {
-		c.Error(errors.New("user not fount"))
+		c.Error(errors.New("user not fount"), 100104)
 		return
 	}
 
 	token, err := jwt.JwtEncrypt(user.Id)
 
 	if err != nil {
-		c.Error(err)
+		c.ServerError(err)
 		return
 
 	}
@@ -59,14 +58,17 @@ func (c *AuthController) GetCaptcha() {
 
 	ctx := c.Ctx.Request.Context()
 
-	id, err := c.authService.GetCaptcha(ctx, &payload)
+	id, code, err := c.authService.GetCaptcha(ctx, &payload)
 
 	if err != nil {
-		c.Error(err)
+		c.ServerError(err)
 		return
 	}
 
-	c.Send(id)
+	c.Send(map[string]string{
+		"id":   id,
+		"code": code,
+	})
 }
 
 func (c *AuthController) Register() {
@@ -76,25 +78,20 @@ func (c *AuthController) Register() {
 	if ok := c.Vaildate(&req); !ok {
 		return
 	}
-	// 账号或者邮箱为空
-	if len(req.Email) == 0 && len(req.Phone) == 0 {
-		c.VaildateError("Email or Phone Required.:")
-		return
-	}
 
-	user, err := c.authService.Register(&req)
+	ctx := c.Ctx.Request.Context()
 
-	fmt.Println("user: ", user)
+	user, err := c.authService.Register(ctx, &req)
 
 	if err != nil {
-		c.Error(err)
+		c.ServerError(err)
 		return
 	}
 
 	token, err := jwt.JwtEncrypt(user.Id)
 
 	if err != nil {
-		c.Error(err)
+		c.ServerError(err)
 		return
 	}
 
