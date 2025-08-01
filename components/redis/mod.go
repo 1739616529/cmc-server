@@ -37,7 +37,7 @@ func (r *RedisService) SetCaptcha(ctx context.Context, user string, id string, c
 
 	// 如果已存在
 	if exists > 0 {
-		return false, &resp.Error{Code: 11201, Msg: "It's been less than a minute since the last request was sent"}
+		return false, resp.NewError(resp.StatusCaptchaExpiration)
 	}
 
 	Engine.Set(ctx, userKey, code, 1*time.Second)
@@ -49,7 +49,7 @@ func (r *RedisService) ValidateCaptcha(ctx context.Context, id string, code stri
 	_code, err := Engine.Get(ctx, "captcha."+id).Result()
 
 	if err != nil {
-		return false, nil
+		return false, resp.NewError(resp.StatusCaptchaExpiration)
 	}
-	return _code == code, err
+	return _code == code, nil
 }

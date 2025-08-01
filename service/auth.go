@@ -23,7 +23,7 @@ func (u *AuthService) Login(ctx context.Context, dto *dto.UserLogin) (*models.Us
 		return nil, err
 	}
 	if !has {
-		return nil, resp.Error{Code: 100104, Msg: "user Not Found"}
+		return nil, resp.NewError(resp.StatusUserExists)
 	}
 
 	success, err := u.redisService.ValidateCaptcha(ctx, dto.VerifyId, dto.Code)
@@ -32,7 +32,7 @@ func (u *AuthService) Login(ctx context.Context, dto *dto.UserLogin) (*models.Us
 	}
 
 	if success == false {
-		return nil, resp.Error{Code: 110202, Msg: "CAPTCHA error"}
+		return nil, resp.NewError(resp.StatusCaptchaValidateFiled)
 	}
 
 	return &user, nil // 没有匹配的用户
@@ -46,16 +46,17 @@ func (u *AuthService) Register(ctx context.Context, dto *dto.UserRegister) (*mod
 		return nil, err
 	}
 	if has {
-		return nil, resp.Error{Code: 100104, Msg: "user exist"}
+		return nil, resp.NewError(resp.StatusUserExists)
 	}
 
 	success, err := u.redisService.ValidateCaptcha(ctx, dto.VerifyId, dto.Code)
 	if err != nil {
+
 		return nil, err
 	}
 
 	if success == false {
-		return nil, resp.Error{Code: 110202, Msg: "CAPTCHA error"}
+		return nil, resp.NewError(resp.StatusCaptchaValidateFiled)
 	}
 
 	user = models.User{}
