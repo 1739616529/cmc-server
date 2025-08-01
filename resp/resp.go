@@ -6,6 +6,6 @@ type Error struct {
 	error
 }
 
-func NewError(code int) *Error {
-	return &Error{Code: code}
+func NewError(code int) Error {
+	return Error{Code: code}
 }

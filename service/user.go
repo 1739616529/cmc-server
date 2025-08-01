@@ -1,9 +1,7 @@
 package service
 
-import (
-	"cmc-server/components/redis"
-)
+import "cmc-server/components/captcha"
 
 type UserService struct {
-	redisService redis.RedisService
+	captchaService captcha.CaptchaService
 }

@@ -1,8 +1,8 @@
 package service
 
 import (
+	"cmc-server/components/captcha"
 	"cmc-server/components/orm"
-	"cmc-server/components/redis"
 	"cmc-server/dto"
 	"cmc-server/models"
 	"cmc-server/resp"
@@ -11,7 +11,7 @@ import (
 )
 
 type AuthService struct {
-	redisService redis.RedisService
+	captchaService captcha.CaptchaService
 }
 
 func (u *AuthService) Login(ctx context.Context, dto *dto.UserLogin) (*models.User, error) {
@@ -26,8 +26,9 @@ func (u *AuthService) Login(ctx context.Context, dto *dto.UserLogin) (*models.Us
 		return nil, resp.NewError(resp.StatusUserExists)
 	}
 
-	success, err := u.redisService.ValidateCaptcha(ctx, dto.VerifyId, dto.Code)
+	success, err := u.captchaService.ValidateCaptcha(ctx, dto.VerifyId, dto.Code)
 	if err != nil {
+
 		return nil, err
 	}
 
@@ -35,7 +36,7 @@ func (u *AuthService) Login(ctx context.Context, dto *dto.UserLogin) (*models.Us
 		return nil, resp.NewError(resp.StatusCaptchaValidateFiled)
 	}
 
-	return &user, nil // 没有匹配的用户
+	return &user, nil
 }
 
 func (u *AuthService) Register(ctx context.Context, dto *dto.UserRegister) (*models.User, error) {
@@ -49,7 +50,7 @@ func (u *AuthService) Register(ctx context.Context, dto *dto.UserRegister) (*mod
 		return nil, resp.NewError(resp.StatusUserExists)
 	}
 
-	success, err := u.redisService.ValidateCaptcha(ctx, dto.VerifyId, dto.Code)
+	success, err := u.captchaService.ValidateCaptcha(ctx, dto.VerifyId, dto.Code)
 	if err != nil {
 
 		return nil, err
@@ -81,7 +82,7 @@ func (u *AuthService) GetCaptcha(ctx context.Context, dto *dto.CaptchaGet) (stri
 	id := util.RandStringLetter(6)
 	code := util.RandNumber(6)
 
-	_, err := u.redisService.SetCaptcha(ctx, dto.Account, id, code)
+	_, err := u.captchaService.SetCaptcha(ctx, dto.Account, id, code)
 
 	if err != nil {
 		return "", "", err
