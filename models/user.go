@@ -5,7 +5,6 @@ import (
 	"cmc-server/dto"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 )
 
@@ -21,29 +20,18 @@ import (
 | 5 | 冻结       | 因异常行为或风控限制，暂时无法使用账号   |
 */
 type User struct {
-	Id        string    `xorm:"pk varchar(36)"`
-	Name      string    `xorm:"varchar(50)"`
-	Email     string    `xorm:"varchar(100) unique"`
-	Phone     string    `xorm:"varchar(20) unique"`
-	Passwd    string    `xorm:"varchar(255) notnull"`
-	Status    int       `xorm:"notnull default(0)"`         // 状态
-	Avatar    string    `xorm:"varchar(255)"`               // 头像地址
-	Role      string    `xorm:"varchar(20) default 'user'"` // 角色字段
-	IsDeleted bool      `xorm:"default false"`              // 软删除标记（可搭配逻辑删除实现）
-	CreatedAt time.Time `xorm:"created"`                    // 创建时间（自动填充）
-	UpdatedAt time.Time `xorm:"updated"`                    // 更新时间（自动更新时间）
-	LastLogin time.Time `xorm:""`                           // 最近登录时间（可手动更新）
+	common.BaseEntry `xorm:"extends"`
+	Id               string    `xorm:"pk varchar(36)"`
+	Name             string    `xorm:"varchar(50) comment('名称')"`
+	Email            string    `xorm:"varchar(100) unique comment('邮箱')"`
+	Phone            string    `xorm:"varchar(20) unique comment('手机号')"`
+	Passwd           string    `xorm:"varchar(255) notnull comment('密码')"`
+	Avatar           string    `xorm:"varchar(255) comment('头像地址')"`
+	Role             string    `xorm:"varchar(20) default 'user' comment('角色')"`
+	LastLogin        time.Time `xorm:"comment('最近登录时间')"`
 }
 
 var _ common.Output = (*User)(nil)
-
-// 在插入前设置 UUID
-func (u *User) BeforeInsert() {
-	println("BeforeInsert")
-	if u.Id == "" {
-		u.Id = uuid.New().String()
-	}
-}
 
 func (u *User) Output() any {
 	var userOV dto.UserOutput
