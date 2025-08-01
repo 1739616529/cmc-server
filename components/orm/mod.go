@@ -1,6 +1,8 @@
-package models
+package orm
 
 import (
+	"cmc-server/models"
+
 	"github.com/beego/beego/v2/core/logs"
 	_ "github.com/go-sql-driver/mysql"
 	"xorm.io/xorm"
@@ -20,7 +22,7 @@ func Init() {
 	// Engine.ShowSQL(true)
 
 	// 自动同步结构体到数据库（建表）
-	err = Engine.Sync2(new(User))
+	err = Engine.Sync2(new(models.User))
 	if err != nil {
 		logs.Error("同步数据库结构失败: %v", err)
 	}

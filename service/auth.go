@@ -1,6 +1,7 @@
 package service
 
 import (
+	"cmc-server/components/orm"
 	"cmc-server/components/redis"
 	"cmc-server/dto"
 	"cmc-server/models"
@@ -17,7 +18,7 @@ func (u *AuthService) Login(dto *dto.UserLogin) (*models.User, error) {
 
 	var user models.User
 
-	has, err := models.Engine.Where("email = ? AND passwd = ?", dto.Email, dto.Passwd).Get(&user)
+	has, err := orm.Engine.Where("email = ? AND passwd = ?", dto.Email, dto.Passwd).Get(&user)
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +27,7 @@ func (u *AuthService) Login(dto *dto.UserLogin) (*models.User, error) {
 	}
 
 	// 邮箱没找到，再用手机号匹配
-	has, err = models.Engine.Where("phone = ? AND passwd = ?", dto.Phone, dto.Passwd).Get(&user)
+	has, err = orm.Engine.Where("phone = ? AND passwd = ?", dto.Phone, dto.Passwd).Get(&user)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +41,7 @@ func (u *AuthService) Login(dto *dto.UserLogin) (*models.User, error) {
 func (u *AuthService) Register(ctx context.Context, dto *dto.UserRegister) (*models.User, error) {
 
 	var user models.User
-	has, err := models.Engine.Where("email = ? OR phone = ?", dto.Account, dto.Account).Get(&user)
+	has, err := orm.Engine.Where("email = ? OR phone = ?", dto.Account, dto.Account).Get(&user)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +67,7 @@ func (u *AuthService) Register(ctx context.Context, dto *dto.UserRegister) (*mod
 		user.Phone = dto.Account
 	}
 
-	_, err = models.Engine.InsertOne(&user)
+	_, err = orm.Engine.InsertOne(&user)
 	if err != nil {
 		return nil, err
 	}
