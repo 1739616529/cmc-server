@@ -42,7 +42,6 @@ func (r *CaptchaService) ValidateCaptcha(ctx context.Context, id string, code st
 	_code, err := redis.Engine.Get(ctx, "captcha."+id).Result()
 
 	if err != nil {
-		println("111, ", err.Error())
 		return false, resp.NewError(resp.StatusCaptchaExpiration)
 	}
 	return _code == code, nil
