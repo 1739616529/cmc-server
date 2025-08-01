@@ -26,7 +26,6 @@ type User struct {
 	Phone            string    `xorm:"varchar(20) unique comment('手机号')"`
 	Passwd           string    `xorm:"varchar(255) notnull comment('密码')"`
 	Avatar           string    `xorm:"varchar(255) comment('头像地址')"`
-	Role             string    `xorm:"varchar(20) default 'user' comment('角色')"`
 	LastLogin        time.Time `xorm:"comment('最近登录时间')"`
 }
 

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	beego "github.com/beego/beego/v2/server/web"
+	"github.com/rs/xid"
 )
 
 func PrintApiPath() {
@@ -82,3 +83,7 @@ func RandStringLetter(length int) string {
 func RandNumber(length int) string {
 	return RandString(length, charsetNumber)
 }
+
+var (
+	Guid = xid.New()
+)
