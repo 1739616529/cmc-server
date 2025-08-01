@@ -26,7 +26,7 @@ type User struct {
 	Email     string    `xorm:"varchar(100) unique"`
 	Phone     string    `xorm:"varchar(20) unique"`
 	Passwd    string    `xorm:"varchar(255) notnull"`
-	Status    int       `xorm:"nt notnull default(0)"`      // 状态
+	Status    int       `xorm:"notnull default(0)"`         // 状态
 	Avatar    string    `xorm:"varchar(255)"`               // 头像地址
 	Role      string    `xorm:"varchar(20) default 'user'"` // 角色字段
 	IsDeleted bool      `xorm:"default false"`              // 软删除标记（可搭配逻辑删除实现）
