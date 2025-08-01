@@ -21,7 +21,6 @@ import (
 */
 type User struct {
 	common.BaseEntry `xorm:"extends"`
-	Id               string    `xorm:"pk varchar(36)"`
 	Name             string    `xorm:"varchar(50) comment('名称')"`
 	Email            string    `xorm:"varchar(100) unique comment('邮箱')"`
 	Phone            string    `xorm:"varchar(20) unique comment('手机号')"`

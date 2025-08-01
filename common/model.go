@@ -9,7 +9,7 @@ type Output interface {
 }
 
 type BaseEntry struct {
-	// Id        string    `xorm:"pk varchar(36)"`
+	Id        string    `xorm:"pk varchar(36)"`
 	IsDeleted bool      `xorm:"default false comment('软删除')"`
 	CreatedAt time.Time `xorm:"created comment('创建时间')"`
 	UpdatedAt time.Time `xorm:"updated comment('更新时间')"`
