@@ -6,28 +6,23 @@ require github.com/beego/beego/v2 v2.3.8
 
 require (
 	github.com/go-sql-driver/mysql v1.9.3
-	github.com/google/uuid v1.6.0
+	github.com/jinzhu/copier v0.4.0
 	github.com/redis/go-redis/v9 v9.11.0
 	github.com/smartystreets/goconvey v1.8.1
 	xorm.io/xorm v1.3.10
 )
 
-require (
-	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/jinzhu/copier v0.4.0 // indirect
-	github.com/resend/resend-go/v2 v2.21.0 // indirect
-)
+require github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/goccy/go-json v0.8.1 // indirect
-	github.com/golang/snappy v0.0.4 // indirect
+	github.com/goccy/go-json v0.10.5 // indirect
+	github.com/golang/snappy v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/syndtr/goleveldb v1.0.0 // indirect
-	github.com/tjfoc/gmsm v1.4.1
-	xorm.io/builder v0.3.11-0.20220531020008-1bd24a7dc978 // indirect
+	xorm.io/builder v0.3.13 // indirect
 )
 
 require (
@@ -39,7 +34,7 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/prometheus/client_golang v1.22.0 // indirect
+	github.com/prometheus/client_golang v1.23.0 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
 	github.com/prometheus/common v0.65.0 // indirect
 	github.com/prometheus/procfs v0.17.0 // indirect
