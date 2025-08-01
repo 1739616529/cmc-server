@@ -3,6 +3,7 @@ package main
 import (
 	"cmc-server/components/orm"
 	"cmc-server/components/redis"
+	_ "cmc-server/env"
 	_ "cmc-server/filter"
 	_ "cmc-server/routers"
 	"cmc-server/util"
