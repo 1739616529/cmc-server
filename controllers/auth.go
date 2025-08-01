@@ -34,7 +34,7 @@ func (c *AuthController) Login() {
 
 	// 用户不存在
 	if user == nil {
-		c.Error(errors.New("user not fount"), 100104)
+		c.Error(100104, errors.New("user not fount"))
 		return
 	}
 

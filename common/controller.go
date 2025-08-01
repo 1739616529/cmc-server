@@ -1,6 +1,7 @@
 package common
 
 import (
+	"cmc-server/components/logger"
 	"cmc-server/resp"
 	"encoding/json"
 	"errors"
@@ -28,7 +29,8 @@ func (c *BaseController) Send(res any) {
 }
 
 func (c *BaseController) VaildateError(msg string) {
-	c.Error(errors.New(msg), 400)
+	logger.Logger.Error("serverError: %#v", msg)
+	c.Error(400, errors.New(msg))
 }
 
 func (c *BaseController) Vaildate(res any) bool {
@@ -51,7 +53,7 @@ func (c *BaseController) Vaildate(res any) bool {
 	return true
 }
 
-func (c *BaseController) Error(err error, code int) {
+func (c *BaseController) Error(code int, err error) {
 
 	if e, ok := err.(resp.Error); ok {
 		c.Data["json"] = map[string]any{
@@ -70,7 +72,12 @@ func (c *BaseController) Error(err error, code int) {
 	c.ServeJSON()
 }
 
-func (c *BaseController) ServerError(err error) {
+func (c *BaseController) ErrorMessage(code int, msg string) {
 
-	c.Error(err, 500)
+	c.Error(code, errors.New(msg))
+}
+
+func (c *BaseController) ServerError(err error) {
+	logger.Logger.Error("serverError: %#v", err)
+	c.Error(500, err)
 }

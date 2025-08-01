@@ -15,7 +15,7 @@ func init() {
 
 	Logger = logs.NewLogger(1000)
 	// 设置同时写到控制台和文件
-	Logger.SetLogger(logs.AdapterFile, `{"filename":"logs/app.log","daily":true,"maxdays":7}`)
+	Logger.SetLogger(logs.AdapterFile, `{"filename":"logs/app.log","daily":true,"maxdays":180, "rotate": true}`)
 
 	// 设置日志级别（建议默认 info）
 	Logger.SetLevel(logs.LevelInfo)

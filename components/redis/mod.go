@@ -1,8 +1,8 @@
 package redis
 
 import (
+	"cmc-server/resp"
 	"context"
-	"errors"
 	"time"
 
 	"github.com/beego/beego/v2/server/web"
@@ -37,7 +37,7 @@ func (r *RedisService) SetCaptcha(ctx context.Context, user string, id string, c
 
 	// 如果已存在
 	if exists > 0 {
-		return false, errors.New("It's been less than a minute since the last request was sent")
+		return false, &resp.Error{Code: 11201, Msg: "It's been less than a minute since the last request was sent"}
 	}
 
 	Engine.Set(ctx, userKey, code, 1*time.Second)
