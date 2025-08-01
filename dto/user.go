@@ -16,9 +16,10 @@ type UserOutput struct {
 }
 
 type UserLogin struct {
-	Phone  string `json:"phone"`
-	Email  string `json:"email"`
-	Passwd string `json:"passwd" valid:"Required"`
+	Account  string `json:"account" valid:"Required"`
+	Type     string `json:"type" valid:"Required"`
+	Code     string `json:"code" valid:"Required"`
+	VerifyId string `json:"verifyId" valid:"Required"`
 }
 
 type UserRegister struct {

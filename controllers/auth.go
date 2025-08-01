@@ -19,13 +19,9 @@ func (c *AuthController) Login() {
 	if ok := c.Vaildate(&req); !ok {
 		return
 	}
-	// 账号或者邮箱为空
-	if len(req.Email) == 0 && len(req.Phone) == 0 {
-		c.VaildateError("Email or Phone Required.:")
-		return
-	}
 
-	user, err := c.authService.Login(&req)
+	ctx := c.Ctx.Request.Context()
+	user, err := c.authService.Login(ctx, &req)
 
 	if err != nil {
 		c.ServerError(err)

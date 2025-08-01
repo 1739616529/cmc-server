@@ -14,28 +14,28 @@ type AuthService struct {
 	redisService redis.RedisService
 }
 
-func (u *AuthService) Login(dto *dto.UserLogin) (*models.User, error) {
+func (u *AuthService) Login(ctx context.Context, dto *dto.UserLogin) (*models.User, error) {
 
 	var user models.User
 
-	has, err := orm.Engine.Where("email = ? AND passwd = ?", dto.Email, dto.Passwd).Get(&user)
+	has, err := orm.Engine.Where("email = ? OR passwd = ?", dto.Account, dto.Account).Get(&user)
 	if err != nil {
 		return nil, err
 	}
-	if has {
-		return &user, nil
+	if !has {
+		return nil, resp.Error{Code: 100104, Msg: "user Not Found"}
 	}
 
-	// 邮箱没找到，再用手机号匹配
-	has, err = orm.Engine.Where("phone = ? AND passwd = ?", dto.Phone, dto.Passwd).Get(&user)
+	success, err := u.redisService.ValidateCaptcha(ctx, dto.VerifyId, dto.Code)
 	if err != nil {
 		return nil, err
 	}
-	if has {
-		return &user, nil
+
+	if success == false {
+		return nil, resp.Error{Code: 110202, Msg: "CAPTCHA error"}
 	}
 
-	return nil, nil // 没有匹配的用户
+	return &user, nil // 没有匹配的用户
 }
 
 func (u *AuthService) Register(ctx context.Context, dto *dto.UserRegister) (*models.User, error) {
