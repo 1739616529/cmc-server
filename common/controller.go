@@ -29,7 +29,7 @@ func (c *BaseController) Send(res any) {
 }
 
 func (c *BaseController) VaildateError(msg string) {
-	logger.Logger.Error("serverError: %#v", msg)
+	logger.Logger.Error("serverError: %#v", errors.New(msg))
 	c.Error(400, errors.New(msg))
 }
 
@@ -64,7 +64,7 @@ func (c *BaseController) Error(code int, err error) {
 	} else {
 		c.Data["json"] = map[string]any{
 			"code":    code,
-			"message": err,
+			"message": err.Error(),
 			"data":    nil,
 		}
 	}
