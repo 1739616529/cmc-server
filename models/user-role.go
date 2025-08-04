@@ -6,6 +6,6 @@ import (
 
 type UserRole struct {
 	common.BaseEntry `xorm:"extends"`
-	UserId           string `xorm:"varchar(50) unique comment('用户id')"`
-	RoleId           string `xorm:"varchar(20) unique comment('劫色id')"`
+	UserId           string `xorm:"varchar(50) comment('用户id')"`
+	RoleId           string `xorm:"varchar(20) comment('劫色id')"`
 }

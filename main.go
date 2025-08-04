@@ -2,6 +2,7 @@ package main
 
 import (
 	"cmc-server/components/orm"
+	"cmc-server/components/rbac"
 	"cmc-server/components/redis"
 	_ "cmc-server/env"
 	_ "cmc-server/filter"
@@ -17,6 +18,7 @@ func main() {
 
 	util.PrintApiPath()
 	orm.Init()
+	rbac.Init()
 	redis.Init()
 
 	beego.Run()

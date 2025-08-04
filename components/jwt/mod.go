@@ -12,7 +12,6 @@ import (
 )
 
 var (
-	JwtDataUserId    = "jwt.filter.userid"
 	JwtDataPayload   = "jwt.filter.JwtPayload"
 	NoAuthPathPrefix = "/noAuth"
 )
@@ -65,7 +64,6 @@ func JwtFilter(ctx *context.Context) {
 	}
 
 	ctx.Input.SetData(JwtDataPayload, jwtPayload)
-	ctx.Input.SetData(JwtDataUserId, jwtPayload.Id)
 
 }
 
