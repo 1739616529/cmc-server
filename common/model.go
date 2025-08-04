@@ -1,13 +1,26 @@
 package common
 
 import (
-	"cmc-server/util"
 	"time"
+
+	"github.com/rs/xid"
 )
 
 type Output interface {
 	Output() any
 }
+
+/*
+*
+| 值 | 状态名
+| - |
+| 0 | 正常
+| 1 | 禁用
+| 2 | 审核中
+| 3 | 审核未通过
+| 4 | 注销
+| 5 | 冻结
+*/
 
 type BaseEntry struct {
 	Id        string    `xorm:"pk varchar(36)"`
@@ -19,7 +32,14 @@ type BaseEntry struct {
 
 // 在插入前设置 UUID
 func (u *BaseEntry) BeforeInsert() {
+
 	if u.Id == "" {
-		u.Id = util.Guid.String()
+		u.Id = xid.New().String()
 	}
+}
+
+var _ Output = (*BaseEntry)(nil)
+
+func (u *BaseEntry) Output() any {
+	return *u
 }

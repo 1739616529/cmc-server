@@ -75,4 +75,7 @@
     "[go]": {
         "editor.defaultFormatter": "golang.go"
     },
+    "[sql]": {
+        "editor.defaultFormatter": "cweijan.vscode-database-client2"
+    },
 }
