@@ -68,10 +68,10 @@ const charsetNumber = "0123456789"
 
 func RandString(length int, ditc string) string {
 
-	rand.Seed(time.Now().UnixNano()) // 每次生成不同结果
+	r := rand.New(rand.NewSource(time.Now().UnixNano())) // 每次生成不同结果
 	b := make([]byte, length)
 	for i := range b {
-		b[i] = ditc[rand.Intn(len(ditc))]
+		b[i] = ditc[r.Intn(len(ditc))]
 	}
 	return string(b)
 }
