@@ -3,6 +3,7 @@ package service
 import (
 	"cmc-server/components/captcha"
 	"cmc-server/components/orm"
+	"cmc-server/components/resend"
 	"cmc-server/dto"
 	"cmc-server/models"
 	"cmc-server/resp"
@@ -12,6 +13,7 @@ import (
 
 type AuthService struct {
 	captchaService captcha.CaptchaService
+	resendService  resend.ResendService
 }
 
 func (u *AuthService) Login(ctx context.Context, dto *dto.UserLogin) (*models.User, error) {
@@ -83,9 +85,16 @@ func (u *AuthService) GetCaptcha(ctx context.Context, dto *dto.CaptchaGet) (stri
 	code := util.RandNumber(6)
 
 	_, err := u.captchaService.SetCaptcha(ctx, dto.Account, id, code)
-
 	if err != nil {
 		return "", "", err
+	}
+
+	if dto.Type == "email" {
+		_, err := u.resendService.Send(code, dto.Account)
+
+		if err != nil {
+			return "", "", err
+		}
 	}
 
 	return id, code, nil

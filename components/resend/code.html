@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+        <title>Document</title>
+        <style>
+            * {
+                box-sizing: border-box;
+                font-family: monospace;
+            }
+            .validate-code {
+                font-size: 50px;
+                margin: 0 auto;
+                background-color: darkorchid;
+                padding: 5px;
+                width: max-content;
+            }
+            body {
+                width: max-content;
+            }
+            .color-red {
+                color: red;
+            }
+            .text-underline {
+                text-decoration: underline;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>
+            <code>Welcome to the CMC service.</code>
+        </h1>
+        <p>This email contains the verification code information you need.</p>
+        <div class="validate-code">{{.Code}}</div>
+        <p class="color-red text-underline">This code is valid for 15 minutes</p>
+    </body>
+</html>
