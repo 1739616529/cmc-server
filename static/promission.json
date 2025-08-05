@@ -4,13 +4,15 @@
         "code": "TEST_1",
         "path": "/user/get",
         "method": "post",
-        "description": ""
+        "description": "",
+        "rank": "1"
     },
     {
         "name": "test2",
         "code": "TEST_2",
         "path": "/user/get2",
         "method": "get",
-        "description": ""
+        "description": "",
+        "rank": "10"
     }
 ]
