@@ -1,7 +1,28 @@
 package service
 
-import "cmc-server/components/captcha"
+import (
+	"cmc-server/components/orm"
+	"cmc-server/models"
+	"cmc-server/resp"
+)
 
 type UserService struct {
-	captchaService captcha.CaptchaService
+}
+
+func (*UserService) FindUser(id string) (*models.User, error) {
+
+	var user models.User
+
+	has, err := orm.Engine.Where("id = ?", id).Get(&user)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if has == false {
+		return nil, resp.NewError(resp.StatusUserNotFound)
+	}
+
+	return &user, nil
+
 }

@@ -11,7 +11,7 @@ func V1Router() *beego.Namespace {
 
 	routes := []beego.LinkNamespace{}
 
-	routes = append(routes, ControllerMethods("/user", &controllers.UserController{}, "/get:post:GetUser")...)
+	routes = append(routes, ControllerMethods("/user", &controllers.UserController{}, "/info:post:GetUser")...)
 
 	routes = append(routes, ControllerMethods("/auth",
 		&controllers.AuthController{},

@@ -9,7 +9,7 @@ type UserCreate struct {
 
 type UserOutput struct {
 	Id     string `json:"id"`
-	Name   string `json:"username" `
+	Name   string `json:"name" `
 	Phone  string `json:"phone" `
 	Email  string `json:"email" `
 	Avatar string `json:"avatar" `

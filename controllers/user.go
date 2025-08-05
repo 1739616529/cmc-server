@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"cmc-server/common"
-	"cmc-server/models"
+	"cmc-server/components/jwt"
 	"cmc-server/service"
 )
 
@@ -12,10 +12,15 @@ type UserController struct {
 }
 
 func (c *UserController) GetUser() {
-	user := models.User{}
-	user.Email = "astaxie@gmail.com"
-	user.Name = "Job"
-	user.Phone = "+01133336482889"
-	user.Passwd = "aaaccc"
+	jwtPayload := c.Ctx.Input.GetData(jwt.JwtDataPayload).(*jwt.JwtPayload)
+
+	user, err := c.userService.FindUser(jwtPayload.Id)
+
+	if err != nil {
+		c.ServerError(err)
+		return
+	}
+
 	c.Send(user.Output())
+
 }
