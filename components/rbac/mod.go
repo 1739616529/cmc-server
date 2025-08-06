@@ -6,6 +6,7 @@ import (
 	"cmc-server/components/orm"
 	"cmc-server/models"
 	"math/big"
+	"net/http"
 	"strings"
 
 	"github.com/beego/beego/v2/server/web/context"
@@ -36,7 +37,29 @@ func RbacFilter(ctx *context.Context) {
 
 	userId := ctx.Input.GetData(jwt.JwtDataPayload).(*jwt.JwtPayload).Id
 
-	println("userId: ", userId)
+	var promission models.Promission
+
+	// 通过路由匹配权限
+	hasPromission, err := orm.Engine.Where("? LIKE CONCAT('%', path)", path).Get(&promission)
+
+	if err != nil {
+		ctx.Output.SetStatus(http.StatusInternalServerError)
+		ctx.Output.Body([]byte(err.Error()))
+		return
+	}
+
+	// 如果没找到 说明不需要控权限
+	if hasPromission == false {
+		return
+	}
+
+	isPromission := MatchPromission(promission.Rank, FindUserPromission(userId))
+	// 如果没权限报错
+	if !isPromission {
+		ctx.Output.SetStatus(http.StatusForbidden)
+		ctx.Output.Body([]byte("Permission denied"))
+		return
+	}
 
 }
 
@@ -70,4 +93,8 @@ func CachePromission() error {
 	}
 
 	return nil
+}
+
+func FindUserPromission(userId string) string {
+	return Promisson["promission:"+Promisson["role:"+userId]]
 }
