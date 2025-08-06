@@ -141,7 +141,7 @@ func InitAdminUser() (*models.User, error) {
 		return nil, err
 	}
 
-	if adminUserHas == false {
+	if !adminUserHas {
 		user = models.User{}
 		user.Id = "admin"
 		user.Email = "admin@qq.com"

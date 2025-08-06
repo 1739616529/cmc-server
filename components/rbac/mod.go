@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	Promisson map[string]string
+	Promisson map[string]string = make(map[string]string)
 )
 
 func Init() {
@@ -59,13 +59,14 @@ func CachePromission() error {
 
 	for _, v := range userRole {
 		var rolePromission models.RolePromission
-		_, err := orm.Engine.Where("role_id = ?", v.RoleId).Get(&rolePromission)  
+		_, err := orm.Engine.Where("role_id = ?", v.RoleId).Get(&rolePromission)
 
 		if err != nil {
 			return err
 		}
+
 		Promisson["role:"+v.UserId] = v.RoleId
-		Promisson["promission"+v.RoleId] = rolePromission.RoleId
+		Promisson["promission:"+v.RoleId] = rolePromission.Promission
 	}
 
 	return nil
