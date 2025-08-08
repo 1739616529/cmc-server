@@ -22,9 +22,6 @@ func Init() {
 		logger.Logger.Error("同步rbac失败: %v", err)
 	}
 
-	if err := CachePromission(); err != nil {
-		logger.Logger.Error("缓存权限失败: %v", err)
-	}
 }
 
 func RbacFilter(ctx *context.Context) {
@@ -35,7 +32,20 @@ func RbacFilter(ctx *context.Context) {
 		return
 	}
 
+	// 用户 id
 	userId := ctx.Input.GetData(jwt.JwtDataPayload).(*jwt.JwtPayload).Id
+
+	var role models.Role
+	if _, err := orm.Engine.Where("user_id = ?", userId).Get(&role); err != nil {
+		ctx.Output.SetStatus(http.StatusInternalServerError)
+		ctx.Output.Body([]byte(err.Error()))
+		return
+	}
+
+	// 如果是admin 不鉴权
+	if role.Code == "ADMIN" {
+		return
+	}
 
 	var promission models.Promission
 
@@ -53,8 +63,8 @@ func RbacFilter(ctx *context.Context) {
 		return
 	}
 
-	isPromission := MatchPromission(promission.Rank, FindUserPromission(userId))
-	// 如果没权限报错
+	isPromission := MatchPromission(promission.Rank, role.Promission)
+	// // 如果没权限报错
 	if !isPromission {
 		ctx.Output.SetStatus(http.StatusForbidden)
 		ctx.Output.Body([]byte("Permission denied"))
@@ -71,30 +81,4 @@ func MatchPromission(promissionList string, promission string) bool {
 	_promission.SetString(promission, 2)
 	_result.And(_promissionList, _promission)
 	return _result.Sign() != 0
-}
-
-func CachePromission() error {
-	var userRole []models.UserRole
-
-	if err := orm.Engine.Find(&userRole); err != nil {
-		return err
-	}
-
-	for _, v := range userRole {
-		var rolePromission models.RolePromission
-		_, err := orm.Engine.Where("role_id = ?", v.RoleId).Get(&rolePromission)
-
-		if err != nil {
-			return err
-		}
-
-		Promisson["role:"+v.UserId] = v.RoleId
-		Promisson["promission:"+v.RoleId] = rolePromission.Promission
-	}
-
-	return nil
-}
-
-func FindUserPromission(userId string) string {
-	return Promisson["promission:"+Promisson["role:"+userId]]
 }

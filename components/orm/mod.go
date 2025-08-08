@@ -25,9 +25,7 @@ func Init() {
 	err = Engine.Sync2(
 		new(models.User),
 		new(models.Promission),
-		new(models.RolePromission),
 		new(models.Role),
-		new(models.UserRole),
 	)
 
 	if err != nil {

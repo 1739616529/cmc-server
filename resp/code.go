@@ -24,6 +24,13 @@ var (
 	StatusUserLoginFailed  = 100106 // 用户登录失败
 	StatusUserTokenExpired = 100107 // 用户登录信息过期
 
+	// 02 权限
+
+	StatusRolePrimissionNotFound = 100204 // 角色或权限不存在
+	StatusRolePrimissionExists   = 100205 // 角色或权限已存在
+	StatusRolePrimissionFailed   = 100206 // 角色或权限操作失败
+	StatusRolePrimissionInvalid  = 100207 // 角色或权限无效
+
 	// 99 数据库
 
 	StatusDBQueryFailed  = 990001 // 数据库查询失败

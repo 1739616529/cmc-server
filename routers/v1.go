@@ -20,6 +20,11 @@ func V1Router() *beego.Namespace {
 		jwt.NoAuthPathPrefix+"/captcha:post:GetCaptcha",
 	)...)
 
+	routes = append(routes, ControllerMethods("/promission",
+		&controllers.PromissionController{},
+		"/changeRolePromission:post:ChangeRolePromission",
+	)...)
+
 	return beego.NewNamespace("/api/v1",
 		routes...,
 	)

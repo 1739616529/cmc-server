@@ -7,6 +7,10 @@ import (
 	"os"
 )
 
+var (
+	ADMIN_CODE = "ADMIN"
+)
+
 func InitRbacData() error {
 
 	// 初始化权限
@@ -16,11 +20,6 @@ func InitRbacData() error {
 
 	// 初始化 角色
 	if err := InitRole(); err != nil {
-		return err
-	}
-
-	// 初始化 用户(admin) 角色
-	if err := InitUserRole(); err != nil {
 		return err
 	}
 
@@ -59,11 +58,6 @@ func InitPromission() error {
 }
 
 func InitRole() error {
-	_, err := orm.Engine.Exec("TRUNCATE TABLE role")
-
-	if err != nil {
-		return err
-	}
 
 	data, err := os.ReadFile("static/role.json")
 	if err != nil {
@@ -79,56 +73,18 @@ func InitRole() error {
 	}
 
 	for _, v := range roleList {
-		_, err = orm.Engine.Insert(&v)
+		var existRole models.Role
+		exists, err := orm.Engine.Where("code = ?", v.Code).Get(&existRole)
 		if err != nil {
 			return err
 		}
+
+		if exists {
+			orm.Engine.ID(existRole.Id).Update(&v)
+		} else {
+			orm.Engine.Insert(&v)
+		}
 	}
-
-	return nil
-}
-
-func InitUserRole() error {
-
-	// 删除用户角色
-	_, err := orm.Engine.Exec("TRUNCATE TABLE user_role")
-	if err != nil {
-		return err
-	}
-
-	// 角色权限
-	_, err = orm.Engine.Exec("TRUNCATE TABLE role_promission")
-	if err != nil {
-		return err
-	}
-
-	// 获取 admin 用户
-	adminUser, err := InitAdminUser()
-	if err != nil {
-		return err
-	}
-
-	// 获取 admin用户角色
-	var userRole models.UserRole
-	_, err = orm.Engine.Where("user_id = ?", adminUser.Id).Get(&userRole)
-
-	if err != nil {
-		return err
-	}
-
-	// 获取 admin 角色
-	var adminRole models.Role
-	_, err = orm.Engine.Where("code = ?", "ADMIN").Get(&adminRole)
-	if err != nil {
-		return err
-	}
-
-	// 创建 admin 角色权限
-	userRole = models.UserRole{
-		UserId: adminUser.Id,
-		RoleId: adminRole.Id,
-	}
-	orm.Engine.Insert(&userRole)
 
 	return nil
 }

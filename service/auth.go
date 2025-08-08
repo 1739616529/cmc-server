@@ -90,11 +90,11 @@ func (u *AuthService) GetCaptcha(ctx context.Context, dto *dto.CaptchaGet) (stri
 	}
 
 	if dto.Type == "email" {
-		_, err := u.resendService.Send(code, dto.Account)
+		// _, err := u.resendService.Send(code, dto.Account)
 
-		if err != nil {
-			return "", "", err
-		}
+		// if err != nil {
+		// 	return "", "", err
+		// }
 	}
 
 	return id, code, nil

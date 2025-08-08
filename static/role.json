@@ -2,6 +2,7 @@
     {
         "name": "admin",
         "code": "ADMIN",
-        "description": ""
+        "description": "",
+        "userId": "admin"
     }
 ]
