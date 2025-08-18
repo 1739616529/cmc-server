@@ -47,10 +47,12 @@ func RbacFilter(ctx *context.Context) {
 		return
 	}
 
+	routerPattern := ctx.Input.GetData("RouterPattern").(string)
+
 	var promission models.Promission
 
 	// 通过路由匹配权限
-	hasPromission, err := orm.Engine.Where("? LIKE CONCAT('%', path)", path).Get(&promission)
+	hasPromission, err := orm.Engine.Where("? LIKE CONCAT('%', path)", routerPattern).Get(&promission)
 
 	if err != nil {
 		ctx.Output.SetStatus(http.StatusInternalServerError)
@@ -59,7 +61,7 @@ func RbacFilter(ctx *context.Context) {
 	}
 
 	// 如果没找到 说明不需要控权限
-	if hasPromission == false {
+	if !hasPromission {
 		return
 	}
 
