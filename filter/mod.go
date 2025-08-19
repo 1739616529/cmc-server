@@ -9,5 +9,5 @@ import (
 
 func init() {
 	web.InsertFilter("/*", web.BeforeRouter, jwt.JwtFilter)
-	web.InsertFilter("/*", web.BeforeRouter, rbac.RbacFilter)
+	web.InsertFilter("/*", web.BeforeExec, rbac.RbacFilter)
 }
