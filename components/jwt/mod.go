@@ -50,7 +50,7 @@ func JwtFilter(ctx *context.Context) {
 	jwtPayload, err := JwtDecrypt(tokenString)
 
 	if err != nil {
-		ctx.Output.SetStatus(400)
+		ctx.Output.SetStatus(http.StatusBadRequest)
 		ctx.Output.Body([]byte("parse token error: " + err.Error()))
 		return
 	}

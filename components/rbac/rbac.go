@@ -23,6 +23,11 @@ func InitRbacData() error {
 		return err
 	}
 
+	// 初始化 admin
+	if _, err := InitAdminUser(); err != nil {
+		return err
+	}
+
 	return nil
 }
 
