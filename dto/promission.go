@@ -5,3 +5,10 @@ type RolePromissionChange struct {
 	Promission string `json:"promission"`
 	Status     int    `json:"status"`
 }
+
+type RoleAdd struct {
+	Name        string `json:"name" validate:"required"`
+	Code        string `json:"code" validate:"required"`
+	Description string `json:"description"`
+	Promission  string `json:"promission"`
+}

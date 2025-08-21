@@ -19,7 +19,7 @@ func (*UserService) FindUser(id string) (*models.User, error) {
 		return nil, err
 	}
 
-	if has == false {
+	if !has {
 		return nil, resp.NewError(resp.StatusUserNotFound)
 	}
 

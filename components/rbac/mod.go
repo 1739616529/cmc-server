@@ -35,28 +35,19 @@ func RbacFilter(ctx *context.Context) {
 	// 用户 id
 	userId := ctx.Input.GetData(jwt.JwtDataPayload).(*jwt.JwtPayload).Id
 
-	var role models.Role
-	if _, err := orm.Engine.Where("user_id = ?", userId).Get(&role); err != nil {
-		ctx.Output.SetStatus(http.StatusInternalServerError)
-		ctx.Output.Body([]byte(err.Error()))
-		return
-	}
-
 	// 如果是admin 不鉴权
-	if role.Code == "ADMIN" {
+	if userId == "admin" {
 		return
 	}
 
-	routerPattern := ctx.Input.GetData("RouterPattern").(string)
-
+	// 查找当前接口的权限
+	routerPattern := ctx.Input.GetData("routerPattern").(string)
 	var promission models.Promission
-
-	// 通过路由匹配权限
 	hasPromission, err := orm.Engine.Where("? LIKE CONCAT('%', path)", routerPattern).Get(&promission)
 
 	if err != nil {
 		ctx.Output.SetStatus(http.StatusInternalServerError)
-		ctx.Output.Body([]byte(err.Error()))
+		ctx.Output.Body([]byte("rbac error. query promission error:" + err.Error()))
 		return
 	}
 
@@ -65,9 +56,23 @@ func RbacFilter(ctx *context.Context) {
 		return
 	}
 
-	isPromission := MatchPromission(promission.Rank, role.Promission)
-	// // 如果没权限报错
-	if !isPromission {
+	isPromission, err := orm.Engine.SQL(`
+        SELECT 1
+        FROM user_role ur
+        JOIN role_permission rp ON ur.role_id = rp.role_id
+        JOIN permission p ON (rp.permission & p.bit) > 0
+        WHERE ur.user_id = ?
+            AND ? LIKE CONCAT('%', p.path)
+        LIMIT 1;`, userId, routerPattern,
+	).Count()
+
+	if err != nil {
+		ctx.Output.SetStatus(http.StatusInternalServerError)
+		ctx.Output.Body([]byte("rbac error. query promission error:" + err.Error()))
+		return
+	}
+
+	if isPromission == 0 {
 		ctx.Output.SetStatus(http.StatusForbidden)
 		ctx.Output.Body([]byte("Permission denied"))
 		return

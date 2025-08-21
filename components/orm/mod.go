@@ -26,6 +26,8 @@ func Init() {
 		new(models.User),
 		new(models.Promission),
 		new(models.Role),
+		new(models.UserRole),
+		new(models.RolePermission),
 	)
 
 	if err != nil {

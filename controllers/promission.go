@@ -22,3 +22,21 @@ func (c *PromissionController) ChangeRolePromission() {
 	c.promissionService.SetPromission(req)
 
 }
+
+func (c *PromissionController) RoleAdd() {
+	var req dto.RoleAdd
+
+	c.ParseJson(&req)
+	if ok := c.Vaildate(&req); !ok {
+		return
+	}
+
+	err := c.promissionService.RolAdd(req)
+
+	if err != nil {
+		c.ServerError(err)
+		return
+	}
+
+	c.Send(nil)
+}

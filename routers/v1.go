@@ -23,6 +23,7 @@ func V1Router() *beego.Namespace {
 	routes = append(routes, ControllerMethods("/promission",
 		&controllers.PromissionController{},
 		"/changeRolePromission:post:ChangeRolePromission",
+		"/role/add:post:RoleAdd",
 	)...)
 
 	return beego.NewNamespace("/api/v1",

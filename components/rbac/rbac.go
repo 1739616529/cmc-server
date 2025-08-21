@@ -4,6 +4,7 @@ import (
 	"cmc-server/components/orm"
 	"cmc-server/models"
 	"encoding/json"
+	"errors"
 	"os"
 )
 
@@ -25,6 +26,10 @@ func InitRbacData() error {
 
 	// 初始化 admin
 	if _, err := InitAdminUser(); err != nil {
+		return err
+	}
+	// 初始化 admin user role
+	if err := InitUserRole(); err != nil {
 		return err
 	}
 
@@ -78,6 +83,10 @@ func InitRole() error {
 	}
 
 	for _, v := range roleList {
+
+		// 内置角色
+		v.IsBuiltIn = true
+
 		var existRole models.Role
 		exists, err := orm.Engine.Where("code = ?", v.Code).Get(&existRole)
 		if err != nil {
@@ -89,6 +98,38 @@ func InitRole() error {
 		} else {
 			orm.Engine.Insert(&v)
 		}
+	}
+
+	return nil
+}
+
+func InitUserRole() error {
+
+	// 1. 先看一下  admin user role 是否存在
+	var userRole models.UserRole
+	hasAdminUserRole, err := orm.Engine.Where("user_id = ?", "admin").Get(&userRole)
+	if err != nil {
+		return errors.New("get admin user role error:" + err.Error())
+	}
+	if hasAdminUserRole {
+		return nil
+	}
+
+	// 2. 如果 admin user role 不存在，则创建 admin user role
+	var adminRole models.Role
+	hasAdminRole, err := orm.Engine.Where("code = ?", "ADMIN").Get(&adminRole)
+	if err != nil {
+		return errors.New("get admin role error:" + err.Error())
+	}
+	if !hasAdminRole {
+		return errors.New("admin role not found")
+	}
+	userRole.UserId = "admin"
+	userRole.RoleId = adminRole.Id
+	_, err = orm.Engine.Insert(&userRole)
+
+	if err != nil {
+		return errors.New("inset admin user role error:" + err.Error())
 	}
 
 	return nil

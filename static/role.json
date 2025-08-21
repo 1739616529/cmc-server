@@ -2,7 +2,11 @@
     {
         "name": "admin",
         "code": "ADMIN",
-        "description": "",
-        "userId": "admin"
+        "description": ""
+    },
+    {
+        "name": "医生",
+        "code": "USER",
+        "description": ""
     }
 ]
